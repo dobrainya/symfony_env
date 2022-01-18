@@ -1,0 +1,34 @@
+version: "3.7"
+
+networks:
+  default:
+
+services:
+  dev-php:
+    build: ./docker/images/php/7.2
+    volumes:
+      - ./app:/var/www/html
+    hostname: dev-php
+    environment:
+      APPLICATION_ENV: "development"
+  dev-nginx:
+    image: nginx
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    volumes:
+      - ./docker/config/nginx:/etc/nginx/conf.d
+      - ./app:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+    hostname: dev-nginx
+    networks:
+      default:
+        aliases:
+          - symfony.local
+  dev-postgresql:
+    build: ./docker/images/db/postgresql/10
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./var/postgresql:/var/lib/postgresql
+    hostname: dev-postgresql
