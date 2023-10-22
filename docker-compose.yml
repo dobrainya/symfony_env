@@ -1,18 +1,17 @@
 version: "3.7"
 
 networks:
-  default:
+  web:
+    driver: "bridge"
+    name: "web-net"
+  backend:
+    driver: "bridge"
+    name: "backend-net"
 
 services:
-  dev-php:
-    build: ./docker/images/php/7.2
-    volumes:
-      - ./app:/var/www/html
-    hostname: dev-php
-    environment:
-      APPLICATION_ENV: "development"
-  dev-nginx:
-    image: nginx
+  nginx:
+    container_name: ${PROJECT_NAME}-nginx
+    image: nginx:latest
     ports:
       - "${FRONTEND_HTTP_PORT}:80"
       - "${FRONTEND_HTTPS_PORT}:443"
@@ -20,15 +19,28 @@ services:
       - ./docker/config/nginx:/etc/nginx/conf.d
       - ./app:/var/www/html
       - ./logs/nginx:/var/log/nginx
-    hostname: dev-nginx
+    hostname: ${PROJECT_NAME}-nginx
     networks:
-      default:
-        aliases:
-          - symfony.local
-  dev-postgresql:
+      web:
+  backend:
+    container_name: ${PROJECT_NAME}-backend
+    build: ./docker/images/php/7.2
+    volumes:
+      - ./app:/var/www/html
+    hostname: ${PROJECT_NAME}-backend
+    environment:
+      APPLICATION_ENV: "development"
+    networks:
+      backend:
+    depends_on:
+      - db
+  db:
+    container_name: ${PROJECT_NAME}-db
     build: ./docker/images/db/postgresql/10
     ports:
       - "${DATABASE_PORT}:5432"
     volumes:
       - ./var/postgresql:/var/lib/postgresql
-    hostname: dev-postgresql
+    networks:
+      backend:
+    hostname: ${PROJECT_NAME}-db
