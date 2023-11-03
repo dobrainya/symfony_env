@@ -29,7 +29,7 @@ services:
   backend:
     container_name: ${PROJECT_NAME}-backend
     build:
-      context: docker/php/7.2
+      context: docker/php/8.1
       dockerfile: Dockerfile
     volumes:
       - ./app:/var/www/html
@@ -43,7 +43,7 @@ services:
   db:
     container_name: ${PROJECT_NAME}-db
     build:
-      context: docker/db/postgresql/10
+      context: docker/db/postgresql
       dockerfile: Dockerfile
     ports:
       - "${DB_HOST_AND_PORT}:5432"
@@ -52,3 +52,8 @@ services:
     networks:
       backend:
     hostname: ${PROJECT_NAME}-db
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      PGDATA: "/var/lib/postgresql/pgdata"
