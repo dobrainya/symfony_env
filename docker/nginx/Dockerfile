@@ -1,10 +1,5 @@
 FROM nginx:latest
 
-#RUN apt-get update && apt-get install -y \
- #       nano \
- #       mc
-ARG APP_HOST
-
 WORKDIR /etc/nginx/conf.d
 
 COPY hosts.local.conf .

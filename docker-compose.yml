@@ -3,10 +3,10 @@ version: "3.7"
 networks:
   web:
     driver: "bridge"
-    name: "web-net"
+    name: "${PROJECT_NAME}-web-net"
   backend:
     driver: "bridge"
-    name: "backend-net"
+    name: "${PROJECT_NAME}-backend-net"
 
 services:
   nginx:
@@ -39,6 +39,8 @@ services:
     networks:
       backend:
     depends_on:
+      - db
+    links:
       - db
   db:
     container_name: ${PROJECT_NAME}-db
