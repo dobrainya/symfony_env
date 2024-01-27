@@ -16,8 +16,11 @@ RUN set -xe && \
 	libpng-dev \
 	libicu-dev \
 	libpq-dev \
+	zlib1g-dev \
+    	libzip-dev \
+    	unzip \
 #Установка расширений
-	&& docker-php-ext-install -j$(nproc) pgsql pdo_pgsql intl pcntl gd opcache \
+	&& docker-php-ext-install -j$(nproc) pgsql pdo_pgsql intl pcntl gd opcache zip \
 #установка xdebug
 	&& pecl install xdebug \
     	&& docker-php-ext-enable xdebug \

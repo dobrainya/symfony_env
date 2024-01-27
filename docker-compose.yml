@@ -40,8 +40,10 @@ services:
       backend:
     depends_on:
       - db
+      - db-test
     links:
       - db
+      - db-test
   db:
     container_name: ${PROJECT_NAME}-db
     build:
@@ -58,4 +60,22 @@ services:
       POSTGRES_USER: "${DB_USER}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_DB: "${DB_NAME}"
+      PGDATA: "/var/lib/postgresql/pgdata"
+      
+  db-test:
+    container_name: ${PROJECT_NAME}-db-test
+    build:
+      context: docker/db/postgresql
+      dockerfile: Dockerfile
+    ports:
+      - "${DB_TEST_HOST_AND_PORT}:5432"
+#    volumes:
+#      - ./var/postgresql:/var/lib/postgresql
+    networks:
+      backend:
+    hostname: ${PROJECT_NAME}-db-test
+    environment:
+      POSTGRES_USER: "${DB_TEST_USER}"
+      POSTGRES_PASSWORD: "${DB_TEST_PASSWORD}"
+      POSTGRES_DB: "${DB_TEST_NAME}"
       PGDATA: "/var/lib/postgresql/pgdata"
